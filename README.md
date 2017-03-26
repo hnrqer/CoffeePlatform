@@ -3,3 +3,6 @@ This is the web application part for the CoffeePlatform which is a robotic platf
 
 More information regarding the outputs of this solution can be found here:
 https://link.springer.com/chapter/10.1007/978-3-319-20609-7_13
+
+The mobile app solution was developed in Cordova, and can be found in this repository:
+https://github.com/vzaramel/mobile-app-tcc
