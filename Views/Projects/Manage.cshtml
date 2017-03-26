@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNet.Identity
+
+@{
+    ViewBag.Title = "Projetos";
+}
+
+<script src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+
+<div class="row">
+    <div id="sidebar-left" class="col-xs-2 col-md-2" >
+      <div id="divList">
+          <h4 class="list-group-item-heading">Lista de Projetos:</h4>
+        @*<div id="divList" style="overflow: scroll;">*@
+            <ul id="ulProjectList" class="nav nav-pills nav-stacked">
+                @{Html.RenderAction("LoadProjectList", "Projects", new { userID = User.Identity.GetUserId(), listType = "manage" });}
+            </ul>
+        @*</div>  *@
+    </div>
+
+    
+    </div>
+    <div id="projectConfig" class="container-fluid col-md-8">
+        <h2>Editar Configurações de Projeto</h2>
+        <h6>Selecione um projeto da lista.</h6>
+    </div>
+    
+</div>

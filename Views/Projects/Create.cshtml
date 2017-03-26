@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNet.Identity
+@model WebApplication.Models.CreateProjectViewModel
+
+@{
+    ViewBag.Title = "Criar Projeto";
+}
+
+<h2 class="center">@ViewBag.Title</h2>
+
+<div class="row well bs-component center">
+    <div class="col-md-12">
+        <section id="createProjForm">
+            @using (Html.BeginForm("Create", "Projects", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <legend>Projeto</legend>
+                <hr />
+                
+                Model.userID = User.Identity.GetUserId();
+                @Html.HiddenFor(model => model.userID)
+                <div>
+                    @Html.ValidationSummary()
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, new {@class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                        <div>
+                            @Html.TextAreaFor(model => model.Description, 5, 40, null)
+                        </div>
+                                                    @*@Html.EditorFor(model => model.Description)*@
+                            @Html.ValidationMessageFor(model => model.Description)
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12" style="padding-top:10vh;display:inline-flex">
+                        <div style ="padding-left:5vh">
+                            <input type="submit" value="Create" class="btn btn-default" />
+                        </div>
+                        <div style ="padding-left:5vh">
+                            <button class="btn btn-primary" onclick="location.href='@Url.Action("DialogVerifyShared", "Projects", new { type = "list" }, null)'" style=" padding-left:10vh; padding-right:10vh" type="button">Voltar para Projetos</button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </section>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+﻿@model WebApplication.Models.ProjectPublicView
+<script src="~/Scripts/Prettify/prettify.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTab #aBlocklyJavaScript').click(function (e) {
+            var idd = parseInt('@Model.ProjectID');
+
+            $.getJSON('@Url.Action("BlocklyJavaScript", "Projects")',
+           {
+               id: idd
+           },
+           function (data) {
+               var html = '<?prettify lang=js linenums=true callback=js_ident ?>' +
+                          '<pre class="prettyprint" id="BlocklyCode" style="height:100%;overflow:auto"></pre>';
+               $('#BlocklyJavaScript').html(html);
+               $('#BlocklyCode').text(data);
+               prettyPrint();
+           });
+        });
+    });
+    
+</script>
+
+<style>
+    ol.linenums {
+        counter-reset: linenumber;
+    }
+
+        ol.linenums li {
+            list-style-type: none;
+            counter-increment: linenumber;
+        }
+
+            ol.linenums li:before {
+                content: counter(linenumber);
+                float: left;
+                margin-left: -4em;
+                text-align: right;
+                width: 3em;
+            }
+</style>
+<div id="tab" class="container" style="width:inherit;height:100vh">
+    <div class="span12" style="height:100%">
+        <ul class="nav nav-tabs" id="myTab" style="width:inherit">
+            <li><a href="#iframeBlockly" data-toggle="tab">Blocos</a></li>
+            <li><a id="aBlocklyJavaScript" href="#BlocklyJavaScript" data-toggle="tab">Código</a></li>
+            <li><a href="#projectDescription" data-toggle="tab">Informações do Projeto</a></li>
+        </ul>
+        <div class="tab-content" style="width:inherit;height:95%">
+            <div class="tab-pane active" id="iframeBlockly" style="height:100%">
+                <iframe style="width:100%;height:100%" class="iframeBlockly" src='@Url.Action("Blockly", "Projects", new {id = Model.ProjectID, isEditable = @ViewBag.isEditable})'></iframe>
+            </div>
+            <div class="tab-pane" id="BlocklyJavaScript" style="height:100%"></div>
+            <div class="tab-pane" id="projectDescription" style="height:100%">
+                <h4 style="color:antiquewhite">Nome: </h4> <p style="padding-left: 2vw;">@Model.ProjectName</p>
+                <h4 style="color:antiquewhite">Autor: </h4> <p style="padding-left: 2vw;">@Model.UserName</p>
+                <h4 style="color:antiquewhite">Descrição: </h4> <p style="padding-left: 2vw;">@Model.ProjectDescription</p>
+            </div>
+        </div>
+    </div>
+</div>

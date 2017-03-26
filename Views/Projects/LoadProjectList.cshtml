@@ -1,0 +1,28 @@
+﻿@model IEnumerable<WebApplication.Models.ProjectListViewModel>
+@*@if (ViewBag.listType == "retrieveData")
+{*@
+    
+    @foreach (var item in Model)
+    {
+        var aux = "item" + @item.ProjectId;
+        <li id=@item.ProjectId onclick="changeColor(this.id)" style="background-color:rgb(49, 109, 109) ; border-radius:4px">
+            @*<i class="glyphicon glyphicon-phone"></i>*@
+            @Ajax.ActionLink(item.Name, "LoadProjectData", "Projects", new { id = item.ProjectId, isEditable = true },
+                            new AjaxOptions { UpdateTargetId = "projectData", InsertionMode = InsertionMode.Replace },
+                            new { @style = "color: white", id=aux })
+
+        </li>
+
+    }
+
+@*}else
+{
+    foreach (var item in Model)
+    {
+        <li @*class="active" id='@item.ProjectId' onclick="changeColor(this.id)" style="background-color:rgb(49, 109, 109) ; border-radius:4px">
+            @* <i class="glyphicon glyphicon-phone"></i>
+            @Ajax.ActionLink(item.Name, "LoadProjectConfig", "Projects", new { id = item.ProjectId }, 
+                            new AjaxOptions { UpdateTargetId = "projectConfig", InsertionMode = InsertionMode.Replace })
+        </li>
+    }
+}*@

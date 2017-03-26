@@ -1,0 +1,9 @@
+﻿@*@model IEnumerable<WebApplication.Models.ProjectListViewModel>
+
+@foreach (var item in Model)
+{
+    <li class="list-group-item">
+        @*<i class="glyphicon glyphicon-phone"></i>*@
+        @*@Ajax.ActionLink(item.Name, "LoadProjectData", "Projects", new { id = item.ProjectId, isEditable = false }, new AjaxOptions { UpdateTargetId = "projectDataPublic", InsertionMode = InsertionMode.Replace })
+    </li>
+}*@*@

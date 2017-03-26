@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+
+    <ul class="nav navbar-nav navbar-right" role="menu">
+        
+        <li>
+            @Html.ActionLink("Olá " + User.Identity.GetUserName() + "!", "Profile", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+        </li>
+      
+        <li class="dropdown" data-dropdown="dropdown">
+            <a id="dropdownProject" href="#" class="dropdown-toggle" data-toggle="dropdown" role="menu">Projetos<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>@Html.ActionLink("Listar", "DialogVerifyShared", "Projects", new { type = "list" }, null)</li>
+                <li>@Html.ActionLink("Criar Novo", "Create", "Projects")</li>
+            </ul>
+        </li>
+
+
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                Configurações de Conta <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>@Html.ActionLink("Alterar senha", "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Alterar Senha" })</li>
+                <li>@Html.ActionLink("Alterar e-mail", "ManageMail", "Account", routeValues: null, htmlAttributes: new { title = "Alterar E-mail" })</li>
+            </ul>
+        </li>
+
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Registre-se já!", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

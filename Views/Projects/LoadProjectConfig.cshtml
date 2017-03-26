@@ -1,0 +1,100 @@
+﻿@model WebApplication.Models.ProjectConfigViewModel
+
+
+<script type="text/javascript">
+    //function SendStatus(text) {
+    //    $('#statusMessage').text(text);
+    //}
+    //function AtualizaLista(id,novoNome){
+    //    $("#item" + id).text(novoNome);
+    //}
+    function loadProjectData() {
+        
+        $.ajax({
+            data: {id : @Model.ID , isEditable : true },
+            url: '@Url.Action("LoadProjectData", "Projects")/' + '@Model.ID',
+            type: 'GET',
+            error: function (jqXHR, status, error) {
+                var x = 10;
+            },
+            success: function (data, status, jqXHR) {
+                $("#projectData").html(data);
+            }
+        });
+    }
+</script>
+
+<h2 class="center">Editar Configurações de Projeto.</h2>
+
+@using (Ajax.BeginForm("SaveProjectConfig", "Projects",
+    new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "statusMessage",
+        InsertionMode = InsertionMode.Replace,
+        OnSuccess = "testando(data," + @Model.ID + ")",
+        //OnSuccess = "function(){SendStatus('Operação realizada com sucesso');"+
+        //                "AtualizaLista(" + Model.ID + "," + Model.Name + ");};",
+        OnFailure = "SendStatus('Ops, ocorreu algum erro.')"
+    }))
+{
+
+    @Html.AntiForgeryToken()
+
+    <div class="form" style="margin-left:5vh;margin-top:6vh;padding-left:10vh">
+        <p id="statusMessage"></p>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ID)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.Name, new { style = "width: 90vh;", id ="nomeCampo" })
+                    @Html.ValidationMessageFor(model => model.Name)
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-top:10vh">
+                @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Description, 5, 40, null)
+                    @Html.ValidationMessageFor(model => model.Description)
+                </div>
+            </div>
+            <div class="form-group" style="padding-top:10vh">
+                @Html.LabelFor(model => model.Date, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.Date)
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-top:18vh;">
+                @Html.LabelFor(model => model.Public, new { @class = "control-label col-md-2" })
+                <!-- input class="myCheckbox col-xs-1" style="top: 7px" type="checkbox" value="Public"> -->
+                <div class="col-md-10">
+                    @Html.CheckBox("Public", Model.Public, new { @class = "control-label col-md-2", @style = "top: 7px", value = true })
+                </div>
+            </div>
+
+
+            @if (Model.SharedBy != "") {
+                <div class="form-group" style="padding-top:10vh">
+                    @Html.LabelFor(model => model.SharedBy, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayFor(model => model.SharedBy)
+                    </div>
+                </div>
+            }
+
+            <div class="form-group col-md-12" style="padding-top:10vh;display:inline-flex">
+                <div>
+                    <button class="btn btn-primary" onclick="loadProjectData()" style="padding-left:10vh; padding-right:10vh" type="button">Voltar ao Projeto</button>
+                </div>
+                <div style="padding-left:5vh">
+                    <input type="submit" value="Salvar Configurações" class="btn btn-default" />
+                </div>
+
+        </div>
+    </div>
+}

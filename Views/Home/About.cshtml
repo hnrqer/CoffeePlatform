@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Sobre o Projeto";
+}
+<div class="jumbotron center-block">
+    <h1>Sobre o Projeto</h1>
+    <p class="text-justify">A robótica educacional pode ter aplicações multidiciplinares e despertar o interesse dos alunos.
+     Sendo assim, esta plataforma permite que seus usuários apliquem os projetos aqui desenvolvidos em uma base 
+    robótica acrescida de um smartphone. Todo o processo mencionado permite que os usuários sejam introduzidos à 
+    prática de programação de uma maneira mais aplicada e, possivelmente, mais didática.</p>
+   @if (!Request.IsAuthenticated) {
+     <button class="btn btn-primary btn-large" onclick="window.location.href='@Url.Action("Register", "Account")'">Registre-se já!</button>
+   }
+   
+</div>

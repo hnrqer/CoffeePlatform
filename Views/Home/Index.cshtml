@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNet.Identity
+@model List<WebApplication.Models.ProjectListViewModel>
+
+@{
+    ViewBag.Title = "Pagina Inicial";
+}
+
+<script src="@Url.Content("~/Scripts/syte.js")" type="text/javascript"></script> 
+
+<div class="jumbotron">
+    <h1 class="center">Plataforma Coffe</h1>
+    <p class="lead center">Deseja acessar sua lista de projetos?</p>
+    <div class=" center">
+        @* form ou javascript *@
+        
+       @if (!Request.IsAuthenticated)
+       {
+        <button class="btn btn-primary" onclick="window.location.href = '@Url.Action("Login","Account")'" style="padding-left:10vh; padding-right:10vh" type="button">Listar Meus Projetos</button>
+        <p style="font-size:medium">Não possui uma conta? @Html.ActionLink("Registre-se já!","Account", "Account/Register")</p>
+       }
+       else
+       {
+        <button class="btn btn-primary" onclick="window.location.href = '@Url.Action("Index","Projects")'" style="padding-left:10vh; padding-right:10vh" type="button">Listar Meus Projetos</button>
+       }
+        
+       
+        </div>
+</div>
+
+<script>
+    //$(document).ready(function () {
+    //    loadpublicHome();
+    //});
+    loadpublicHome();
+</script>
+
+
+
+    
+<div id="publicProjects">
+    <h2 style="margin-left: auto; margin-right: auto; width: 15vw;" class="center">
+        Carregando...
+    </h2>
+    <div class="progress progress-striped active center" style="width:70vw">
+        <div class="progress-bar" style="width: 100%"></div>
+    </div>
+</div>
+   <div id="publicProjectSpace"></div> 

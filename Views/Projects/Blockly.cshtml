@@ -1,0 +1,362 @@
+﻿@model WebApplication.Models.ProjectConfigViewModel
+@using Microsoft.AspNet.Identity
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="../../Blockly/blockly_compressed.js"></script>
+    <script type="text/javascript" src="../../Blockly/blocks_compressed.js"></script>
+    <script type="text/javascript" src="../../Blockly/javascript_compressed.js"></script>
+    <script type="text/javascript" src="../../Blockly/blocks_tcc.js"></script>
+    <script type="text/javascript" src="../../Blockly/msg/js/pt-br.js"></script>
+    <script src="@Url.Content("~/Scripts/syte.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+
+    <style>
+        html, body {
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: inherit;
+        }
+
+        .blocklySvg {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <script>
+    function init() {
+        Blockly.inject(document.body,
+            { path: '../../Blockly/', toolbox: document.getElementById('toolbox') });
+
+        // Let the top-level application know that Blockly is ready.
+        //window.parent.blocklyLoaded(Blockly);
+        if ('@ViewBag.isEditable' == 'False') {
+            Blockly.readOnly = true;
+        }
+
+        loadDataFromDB();
+    }
+    function loadDataFromDB() {
+        var idd = parseInt('@Model.ID');
+        $.getJSON('@Url.Action("LoadProjectBlocklyJson", "Projects")',
+            {
+                id: idd
+            },
+            function (data) {
+                load(data.BlocklyData);
+            });
+        }
+        function load(xmlString) {
+
+            var xml = Blockly.Xml.textToDom(xmlString);
+            Blockly.getMainWorkspace().clear();
+            Blockly.Xml.domToWorkspace(Blockly.getMainWorkspace(), xml);
+
+        }
+
+        function Share() {
+            $('#myModal').modal({ show: true })
+        }
+
+        
+
+
+
+        function Delete() {
+            if (confirm("Deseja realente excluir este projeto?")) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Projects", new {id=Model.ID})',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    error: function (jqXHR, status, error) {
+                        var x = 10;
+                    },
+                    success: function (data, status, jqXHR) {
+                        window.top.location.reload();
+                    }
+                });
+            }
+
+        }
+    </script>
+    @if (ViewBag.isEditable)
+    {
+        <script>
+        
+            function EditConfig() {
+                $.ajax({
+                    url: '@Url.Action("LoadProjectConfig", "Projects")/' + '@Model.ID' ,
+                    type: 'GET',
+                    error: function (jqXHR, status, error) {
+                        var x = 10;
+                    },
+                    success: function (data, status, jqXHR) {
+                        window.top.$("#projectData").html(data);
+                    }
+                });
+            }
+
+        function Save() {
+            var xml = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
+            var textxml = Blockly.Xml.domToText(xml);
+            var blocklyCode = Blockly.JavaScript.workspaceToCode();
+            var regex = /var\s[a-z]*[0-9]*(;)/gi;
+            //var result = blocklyCode.match(regex);
+
+            
+            blocklyCode = blocklyCode.replace(regex, "");
+            
+            //blocklyCode = blocklyCode.replace("var", "");
+            var idd = parseInt('@Model.ID');
+
+            var send = {
+                "ID": idd,
+                "BlocklyData": textxml,
+                "BlocklyCode": blocklyCode
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveProjectData", "Projects")',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify(send), // Note it is important
+                error: function (jqXHR, status, error) {
+                    alert("ERRO ao salvar o projeto");
+                },
+                success: function (data, status, jqXHR) {
+                    alert("O projeto foi salvo com sucesso");
+                }
+            });
+
+        }
+     </script>
+    }
+    else
+    {
+        <script>
+            function CopyProject() {
+                var idd = parseInt('@Model.ID');
+                var send = {
+                    "id": idd,
+                }
+                $.ajax({
+                    url: '@Url.Action("CopyProject", "Projects")',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(send), // Note it is important
+                    error: function (jqXHR, status, error) {
+                        alert("ERRO ao copiar o projeto");
+                    },
+                    success: function (data, status, jqXHR) {
+                        alert("O projeto foi copiado à sua lista com sucesso");
+                    }
+                });
+            }
+            function VerifyCopyProject() {
+                var idd = parseInt('@Model.ID');
+                var userId = '@User.Identity.GetUserId()';
+                var send = {
+                    "id": idd,
+                    "userId": userId
+                }
+                $.ajax({
+                    url: '@Url.Action("VerifyCopyProject", "Projects")',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(send), // Note it is important
+                    error: function (jqXHR, status, error) {
+                        alert("ERRO ao copiar o projeto");
+                    },
+                    success: function (data, status, jqXHR) {
+                        if (data.answer == true) {
+                            var copy = confirm("Você já possui um projeto com este nome. Deseja realmente copiá-lo?");
+                            if (copy) { CopyProject(idd);}
+                        }
+                        else { CopyProject(idd); }
+                    }
+                });
+            }
+        </script>
+    }
+
+
+</head>
+<body onload="init()" style="height:100vh;width:100vw">
+    <div>
+        <div>
+            @{
+            if (ViewBag.isEditable)
+            {
+                <div class="btn-group center">
+                    <button type="button" class="btn  btn-success" onclick="Save()">Salvar</button>
+                    <button type="button" class="btn btn-success" onclick="EditConfig()">Editar Configurações </button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Compartilhar</button>
+                </div>
+                <button type="button"  class="btn btn-danger" onclick="Delete()" style="float:right">Excluir</button>
+            }
+            else
+            {
+                if (User.Identity.GetUserId() != null) { 
+                     <button class="btn btn-primary" onclick="VerifyCopyProject()" style="float:right">Copiar Projeto!</button>
+                }
+                }
+    <button type="button" class="btn btn-danger" onclick="history.go(-1)" style="float:right">Voltar</button>
+                     @*<a data-ajax="true" data-ajax-mode="replace" data-ajax-update="#publicProjectSpace" href="/Projects/PublicProjects">voltar</a>*@
+            }}
+        </div>
+@if (ViewBag.isEditable)
+            {
+        <div>
+
+            <xml id="toolbox" style="display:none">
+                <category name="Funções" custom="PROCEDURE"></category>
+                <category name="Variáveis" custom="VARIABLE"></category>
+                <category name="Controle">
+                    <block type="controls_if"></block>
+                    <block type="while_tcc"></block>
+                    @*<block type="controls_whileUntil"></block>*@
+                    <block type="controls_repeat_ext"></block>
+                    <block type="controls_for"></block>
+                    <block type="controls_forEach"></block>
+                    <block type="controls_flow_statements"></block>
+                </category>
+                <category name="Lógico">
+                    <block type="logic_compare"></block>
+                    <block type="logic_operation"></block>
+                    <block type="logic_boolean"></block>
+                    <block type="logic_negate"></block>
+                    <block type="logic_null"></block>
+                    <block type="logic_ternary"></block>
+                </category>
+                <category name="Matemático">
+                    <block type="math_number"></block>
+                    <block type="math_arithmetic"></block>
+                    <block type="math_constrain"></block>
+                    <block type="math_single"></block>
+                    <block type="math_round"></block>
+                    <block type="math_random_int"></block>
+                    <block type="math_random_float"></block>
+                    <block type="math_trig"></block>
+                    <block type="math_constant"></block>
+                    <block type="math_change"></block>
+                    <block type="math_on_list"></block>
+                    <block type="math_modulo"></block>
+                </category>
+                <category name="Listas">
+                    <block type="lists_create_with"></block>
+                    <block type="lists_create_empty"></block>
+                    <block type="lists_repeat"></block>
+                    <block type="lists_length"></block>
+                    <block type="lists_getIndex"></block>
+                    <block type="lists_isEmpty"></block>
+                    <block type="lists_setIndex"></block>
+                    <block type="lists_getSublist"></block>
+                    <block type="lists_indexOf"></block>
+                </category>
+                <category name="Texto">
+                    <block type="text"></block>
+                    <block type="text_print"></block>
+                </category>
+                <category name="Robô-Movimento">
+                    <block type="mov_virar"></block>
+                    <block type="mov_ms"></block>
+                    <block type="mov_cm"></block>
+                    <block type="parar_ms"></block>
+                    <block type="mov"></block>
+                    <block type="virar"></block>
+                    <block type="parar"></block>
+                    <block type="velocidade"></block>
+                </category>
+                <category name="Robô-Timers">
+                    <block type="sleep"></block>
+                </category>
+                <category name="Robô-Sensores">
+                    @*<block type="verificar_acelerometro"></block>
+                    <block type="verificar_bussola"></block>
+                    <block type="verificar_gps"></block>*@
+                    @*<block type="ativar_acelerometro"></block>
+                    <block type="ativar_bussola"></block>*@
+                    <block type="ler_acelerometro"></block>
+                    <block type="ler_bussola"></block>
+                    <block type="ler_infravermelho"></block>
+                    <block type="ler_distancia"></block>
+                    <block type="ler_vel_esq"></block>
+                    <block type="ler_vel_dir"></block>
+                    <block type="ler_refletancia"></block>
+                    @*<block type="ler_gps"></block>*@
+                </category>
+         </xml>
+
+        </div>
+}
+    </div>
+    @if (ViewBag.isEditable) { 
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow-y: auto">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="Hide()">×</button>
+                        <h4 class="modal-title">Compartilhar Projeto</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <p id="statusMsg"></p>
+
+                        @using (Ajax.BeginForm("ShareProject", "Projects", new AjaxOptions
+                        {
+                            HttpMethod = "POST",
+                            UpdateTargetId = "statusMsg",
+                            InsertionMode = InsertionMode.Replace,
+                        }))
+                        {
+                                @Html.AntiForgeryToken()
+                                <div class="form-horizontal">
+                                    <hr />
+                                    @Html.ValidationSummary(true)
+                                    @Html.HiddenFor(model => model.ID)
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ShareTo, new { @class = "control-label col-md-4" })
+                                        <div class="col-md-8">
+                                            @Html.TextBoxFor(model => model.ShareTo, new { style = "width: 100%;margin-top:1vh;" })
+                                            @Html.ValidationMessageFor(model => model.ShareTo)
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-group col-md-12" style="padding-top:5vh;display:inline-flex">
+                                            <div style="padding-left:50vh">
+                                                <input type="submit" value="Compartilhar" class="btn btn-success" />
+                                            </div>
+                                            <div style="padding-left:2vh">
+                                                <button class="btn btn-primary" type="button" data-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</body>
+</html>

@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Coffe</title>
+    
+    @*@Styles.Render("~/Reset/css")*@
+    @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/Content/css")
+    
+
+
+</head>
+<body>
+    <script src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/syte.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Prettify/prettify.js")" type="text/javascript"></script> 
+    <div class="bs-component">
+        
+        <div class="navbar navbar-inverse navbar-fixed-top navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Coffe", "Index", "Home", null, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse navbar-responsive-collapse">
+                    <ul class="nav navbar-nav">
+                        @*<li>@Html.ActionLink("Home", "Index", "Home")</li>*@
+                        <li>@Html.ActionLink("Sobre o Projeto", "About", "Home")</li>
+                        <li>@Html.ActionLink("Projetos Públicos", "PublicProjects", "Projects")</li>
+                        <li>@Html.ActionLink("Contatos", "Contact", "Home")</li>
+                        <li class="dropdown" data-dropdown="dropdown">
+                            <a id="dropdownProject" href="#" class="dropdown-toggle" data-toggle="dropdown" role="menu">Tutoriais<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Tutorial 1", "Tutorial1", "Home")> Tutorial 1</li>
+                                <li>@Html.ActionLink("Tutorial 2", "Tutorial2", "Home")> Tutorial 2</li>
+                                <li>@Html.ActionLink("Tutorial 3", "Tutorial3", "Home")> Tutorial 3</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+        <div class="container body-content" id="mainDiv" style=" width:inherit">
+            @RenderBody()
+            <hr />
+            <footer class="col-md-12">
+                <p>&copy; @DateTime.Now.Year - Trabalho de conclusão de curso - Engenharia de Computação - UTFPR Curitiba</p>
+            </footer>
+        </div>
+        
+    </div>
+    <div id="source-modal" class="modal fade in"></div>
+   
+    @*<a id="source-modal" href="#shareModal"  class="modal fade in " data-toggle="modal"  style="display:none"></a>*@
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @*<script>
+
+        $(function () {
+            var $mainDiv = $("mainDiv");
+
+            $(document).on("click","a,area",function () {
+                var href = $(this).attr("href");
+
+                if (href.indexOf(document.domain) > -1
+       || href.indexOf(':') === -1) {
+                    history.pushState({}, '', href);
+                    loadPage(href);
+                    return false;
+                }
+            });
+        });
+    </script>*@
+</body>
+</html>

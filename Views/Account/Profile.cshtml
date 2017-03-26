@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNet.Identity
+@model WebApplication.Models.ProfileViewModel
+
+@{
+    ViewBag.Title = "Perfil de Usuário";
+}
+
+<h2 class="center">Perfil de Usuário</h2>
+<div class="row well bs-component center">
+    <div class="col-md-12">
+        <h4 class="center">Você está conectado como <strong style="color:blanchedalmond">@User.Identity.GetUserName()</strong>.</h4>
+        <h4 style="color:antiquewhite">Nome: </h4> <p style="padding-left: 2vw;">@Model.Name</p>
+        <h4 style="color:antiquewhite">E-mail: </h4> <p style="padding-left: 2vw;">@Model.Email</p>
+        <h4 style="color:antiquewhite">Número de Projetos: </h4> <p style="padding-left: 2vw;">@Model.NumProjetos</p>
+    </div>
+</div>
